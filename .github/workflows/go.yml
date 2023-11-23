@@ -1,6 +1,10 @@
 name: Go
 
-on: ["push", "pull_request"]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
 
 jobs:
   format:
@@ -40,7 +44,7 @@ jobs:
       matrix:
         version:
           - 'stable'
-          - 'oldstable'
+          # TODO: add 'oldstable' when 1.22 comes out
           
     runs-on: ubuntu-latest
     steps:
