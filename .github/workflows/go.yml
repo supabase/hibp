@@ -71,6 +71,7 @@ jobs:
     - name: Test
       run: go test -coverprofile=coverage.out -v ./...
       
-    - name: Coveralls
-      uses: coverallsapp/github-action@v2
+    - uses: shogo82148/actions-goveralls@v1
+      with:
+        path-to-profile: coverage.out
 
