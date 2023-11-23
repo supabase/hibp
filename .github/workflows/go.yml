@@ -1,0 +1,72 @@
+name: Go
+
+on: ["push", "pull_request"]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 'stable'
+        
+    - name: Format
+      run: |
+        set -ex
+
+        test -z $(gofmt -l .)
+      
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 'stable'
+        
+    - name: Vet
+      run: go vet ./...
+
+    - name: Static Check
+      run: go run honnef.co/go/tools/cmd/staticcheck@latest
+
+  build:
+    strategy:
+      matrix:
+        version:
+          - 'stable'
+          - 'oldstable'
+          
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.version }}
+
+    - name: Build
+      run: go build -v ./...
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: 'stable'
+        
+    - name: Test
+      run: go test -coverprofile=coverage.out -v ./...
+      
+    - name: Coveralls
+      uses: coverallsapp/github-action@v2
+
